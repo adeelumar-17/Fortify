@@ -1,317 +1,586 @@
 /* Reset and base styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #e0e0e0;
+  background-color: #0a192f;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+a {
+  color: #64ffda;
+  text-decoration: none;
+}
+
+/* Header styles */
+header {
+  background-color: rgba(10, 25, 47, 0.9);
+  padding: 1rem 0;
+  border-bottom: 1px solid #233554;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #64ffda;
+}
+
+.logo i {
+  margin-right: 0.5rem;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+}
+
+nav ul li {
+  margin-left: 1.5rem;
+}
+
+nav ul li a {
+  color: #8892b0;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #64ffda;
+}
+
+.notification-icon {
+  font-size: 1.2rem;
+}
+
+/* Add styles for account dropdown */
+.account-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.account-icon {
+  font-size: 1.2rem;
+  color: #8892b0;
+  transition: color 0.3s ease;
+}
+
+.account-icon:hover {
+  color: #64ffda;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #112240;
+  min-width: 120px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 5px;
+  border: 1px solid #233554;
+}
+
+.dropdown-content a {
+  color: #8892b0;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #233554;
+  color: #64ffda;
+}
+
+.account-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Security tip styles */
+.security-tip {
+  background: linear-gradient(90deg, #4a00e0, #8e2de2);
+  color: #fff;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Hero section styles */
+.hero {
+  background: linear-gradient(135deg, #0a192f, #112240);
+  text-align: center;
+  padding: 6rem 0;
+  height: 82vh;
+  padding-top: 12%;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  color: #64ffda;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #8892b0;
+}
+#particles-js {
+  position: absolute;
+  width: 100%;
+  height: 82vh;
+  z-index: 0;
+  opacity: 0.6;
+}
+.cta-button {
+  display: inline-block;
+  background: linear-gradient(90deg, #64ffda, #48bfe3);
+  color: #0a192f;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  text-shadow: none;
+}
+
+.cta-button:hover {
+  background: linear-gradient(90deg, #48bfe3, #64ffda);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
+}
+
+/* Tools section styles */
+.tools {
+  background: linear-gradient(135deg, #112240, #1d3557);
+  padding: 6rem 0;
+}
+
+.tools h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #64ffda;
+  margin-bottom: 3rem;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.tool-card {
+  background: linear-gradient(135deg, #233554, #2a4365);
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(100, 255, 218, 0.2);
+}
+
+.tool-card i {
+  font-size: 3rem;
+  color: #64ffda;
+  margin-bottom: 1rem;
+}
+
+.tool-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #e6f1ff;
+}
+
+.tool-card p {
+  color: #8892b0;
+}
+
+/* Awareness section styles */
+.awareness {
+  background: linear-gradient(135deg, #0a192f, #112240);
+  text-align: center;
+  padding: 6rem 0;
+}
+
+.awareness h2 {
+  font-size: 2.5rem;
+  color: #64ffda;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+}
+
+.awareness p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #8892b0;
+}
+
+/* Footer styles */
+footer {
+  background: linear-gradient(135deg, #112240, #1d3557);
+  padding: 4rem 0 1rem;
+  border-top: 1px solid #233554;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-section h3,
+.footer-section h4 {
+  color: #64ffda;
+  margin-bottom: 1rem;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-section ul li a {
+  color: #8892b0;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+  color: #64ffda;
+}
+
+.social-icons a {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: #8892b0;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #64ffda;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid #233554;
+  color: #8892b0;
+}
+
+/* Login and Signup page styles */
+.auth-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a192f, #112240);
+}
+
+.auth-form-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 400px;
+  background: linear-gradient(135deg, #233554, #2a4365);
+  padding: 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.auth-form h2 {
+  color: #64ffda;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.auth-form p {
+  color: #8892b0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #233554;
+  background-color: rgba(10, 25, 47, 0.7);
+  color: #e0e0e0;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #64ffda;
+  box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.2);
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.auth-links a {
+  color: #64ffda;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+.auth-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #64ffda, #48bfe3);
+  color: #0a192f;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.auth-btn:hover {
+  background: linear-gradient(90deg, #48bfe3, #64ffda);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
+}
+
+.auth-separator {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.auth-separator hr {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background-color: #233554;
+}
+
+.auth-separator span {
+  padding: 0 10px;
+  color: #8892b0;
+}
+
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #233554;
+  color: #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  background-color: #64ffda;
+  color: #0a192f;
+  transform: translateY(-2px);
+}
+
+.auth-footer {
+  text-align: center;
+  color: #8892b0;
+  font-size: 0.9rem;
+}
+
+.auth-footer a {
+  color: #64ffda;
+  transition: all 0.3s ease;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.auth-image {
+  flex: 1;
+  background: linear-gradient(rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.7)),
+    url("/placeholder.svg?height=1080&width=1920");
+  background-size: cover;
+  background-position: center;
+  display: none;
+}
+
+/* Password strength meter */
+.password-strength-meter {
+  height: 5px;
+  background-color: #233554;
+  margin-top: 8px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.strength-bar {
+  height: 100%;
+  width: 0;
+  background-color: #64ffda;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.password-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #8892b0;
+}
+
+/* Message styles */
+.message {
+  padding: 12px;
+  border-radius: 5px;
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+}
+
+.success-message {
+  background-color: rgba(100, 255, 218, 0.1);
+  border-left: 4px solid #64ffda;
+}
+
+.success-message i {
+  color: #64ffda;
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  background-color: rgba(255, 77, 77, 0.1);
+  border-left: 4px solid #ff4d4d;
+}
+
+.error-message i {
+  color: #ff4d4d;
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+@media (min-width: 992px) {
+  .auth-image {
+    display: block;
   }
-  
-  body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #e0e0e0;
-    background-color: #0a192f;
-  }
-  
-  .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  a {
-    color: #64ffda;
-    text-decoration: none;
-  }
-  
-  /* Header styles */
-  header {
-    background-color: rgba(10, 25, 47, 0.9);
-    padding: 1rem 0;
-    border-bottom: 1px solid #233554;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-  }
-  
-  header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #64ffda;
-  }
-  
-  .logo i {
-    margin-right: 0.5rem;
-  }
-  
-  nav ul {
-    display: flex;
-    list-style: none;
-  }
-  
-  nav ul li {
-    margin-left: 1.5rem;
-  }
-  
-  nav ul li a {
-    color: #8892b0;
-    transition: color 0.3s ease;
-  }
-  
-  nav ul li a:hover {
-    color: #64ffda;
-  }
-  
-  .notification-icon {
-    font-size: 1.2rem;
-  }
-  
-  /* Security tip styles */
-  .security-tip {
-    background: linear-gradient(90deg, #4a00e0, #8e2de2);
-    color: #fff;
-    text-align: center;
-    padding: 0.5rem;
-  }
-  
-  /* Hero section styles */
-  .hero {
-    background: linear-gradient(135deg, #0a192f, #112240);
-    text-align: center;
-    padding: 6rem 0;
-    height:82vh;
-    padding-top: 12%;
-  }
-  
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
   .hero h1 {
-    font-size: 3.5rem;
-    color: #64ffda;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
-  }
-  
-  .hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #8892b0;
-  }
-  #particles-js{
-    position: absolute; 
-    width: 100%; 
-    height: 82vh; 
-    z-index: 0;
-    opacity: 0.6;
-  }
-  .cta-button {
-    display: inline-block;
-    background: linear-gradient(90deg, #64ffda, #48bfe3);
-    color: #0a192f;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    text-shadow: none;
-  }
-  
-  .cta-button:hover {
-    background: linear-gradient(90deg, #48bfe3, #64ffda);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
-  }
-  
-  /* Tools section styles */
-  .tools {
-    background: linear-gradient(135deg, #112240, #1d3557);
-    padding: 6rem 0;
-  }
-  
-  .tools h2 {
-    text-align: center;
     font-size: 2.5rem;
-    color: #64ffda;
-    margin-bottom: 3rem;
-    text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
   }
-  
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-  }
-  
-  .tool-card {
-    background: linear-gradient(135deg, #233554, #2a4365);
-    padding: 2rem;
-    border-radius: 10px;
-    text-align: center;
-    transition: all 0.3s ease;
-  }
-  
-  .tool-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(100, 255, 218, 0.2);
-  }
-  
-  .tool-card i {
-    font-size: 3rem;
-    color: #64ffda;
-    margin-bottom: 1rem;
-  }
-  
-  .tool-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    color: #e6f1ff;
-  }
-  
-  .tool-card p {
-    color: #8892b0;
-  }
-  
-  /* Awareness section styles */
-  .awareness {
-    background: linear-gradient(135deg, #0a192f, #112240);
-    text-align: center;
-    padding: 6rem 0;
-  }
-  
+
+  .tools h2,
   .awareness h2 {
-    font-size: 2.5rem;
-    color: #64ffda;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+    font-size: 2rem;
   }
-  
-  .awareness p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #8892b0;
-  }
-  
-  /* Footer styles */
-  footer {
-    background: linear-gradient(135deg, #112240, #1d3557);
-    padding: 4rem 0 1rem;
-    border-top: 1px solid #233554;
-  }
-  
+
   .footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+    grid-template-columns: 1fr;
   }
-  
-  .footer-section h3,
-  .footer-section h4 {
-    color: #64ffda;
-    margin-bottom: 1rem;
+}
+
+/* Additional enhancements */
+.tool-card,
+.cta-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::before,
+.cta-button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to bottom right, rgba(100, 255, 218, 0.1) 0%, rgba(100, 255, 218, 0) 100%);
+  transform: rotate(45deg);
+  z-index: 1;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.tool-card:hover::before,
+.cta-button:hover::before {
+  top: -100%;
+  left: -100%;
+}
+
+/* Subtle animation for security tip */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .footer-section ul {
-    list-style: none;
+  50% {
+    background-position: 100% 50%;
   }
-  
-  .footer-section ul li {
-    margin-bottom: 0.5rem;
+  100% {
+    background-position: 0% 50%;
   }
-  
-  .footer-section ul li a {
-    color: #8892b0;
-    transition: color 0.3s ease;
-  }
-  
-  .footer-section ul li a:hover {
-    color: #64ffda;
-  }
-  
-  .social-icons a {
-    font-size: 1.5rem;
-    margin-right: 1rem;
-    color: #8892b0;
-    transition: color 0.3s ease;
-  }
-  
-  .social-icons a:hover {
-    color: #64ffda;
-  }
-  
-  .footer-bottom {
-    text-align: center;
-    padding-top: 1rem;
-    border-top: 1px solid #233554;
-    color: #8892b0;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .hero h1 {
-      font-size: 2.5rem;
-    }
-  
-    .tools h2,
-    .awareness h2 {
-      font-size: 2rem;
-    }
-  
-    .footer-content {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  /* Additional enhancements */
-  .tool-card,
-  .cta-button {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .tool-card::before,
-  .cta-button::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(to bottom right, rgba(100, 255, 218, 0.1) 0%, rgba(100, 255, 218, 0) 100%);
-    transform: rotate(45deg);
-    z-index: 1;
-    transition: all 0.3s ease;
-    pointer-events: none;
-  }
-  
-  .tool-card:hover::before,
-  .cta-button:hover::before {
-    top: -100%;
-    left: -100%;
-  }
-  
-  /* Subtle animation for security tip */
-  @keyframes gradientFlow {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  
-  .security-tip {
-    background: linear-gradient(90deg, #4a00e0, #8e2de2, #4a00e0);
-    background-size: 200% 100%;
-    animation: gradientFlow 5s ease infinite;
-  }
-  
-  
+}
+
+.security-tip {
+  background: linear-gradient(90deg, #4a00e0, #8e2de2, #4a00e0);
+  background-size: 200% 100%;
+  animation: gradientFlow 5s ease infinite;
+}
+
