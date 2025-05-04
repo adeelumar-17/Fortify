@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitoring - SecureShield</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles specific to network monitoring */
+        .tool-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dashboard-card h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dashboard-card h3 i {
+            margin-right: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e0e0e0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        
+        .network-map {
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+        
+        .device-node {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #64ffda;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a192f;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+        }
+        
+        .device-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.8);
+        }
+        
+        .device-connection {
+            position: absolute;
+            height: 2px;
+            background: rgba(100, 255, 218, 0.5);
+            transform-origin: 0 0;
+            z-index: -1;
+        }
+        
+        .traffic-chart {
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            height: 300px;
+        }
+        
+        .chart-container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+        
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(to top, #64ffda, #48bfe3);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease;
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            font-size: 0.8rem;
+            color: #8892b0;
+            text-align: center;
+            width: 40px;
+            margin-left: -10px;
+        }
+        
+        .alerts-container {
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .alert-item {
+            padding: 1rem;
+            border-left: 3px solid;
+            margin-bottom: 1rem;
+            background: rgba(35, 53, 84, 0.5);
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .alert-item.high {
+            border-color: #ff6347;
+        }
+        
+        .alert-item.medium {
+            border-color: #ffd700;
+        }
+        
+        .alert-item.low {
+            border-color: #64ffda;
+        }
+        
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .alert-title {
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        
+        .alert-severity {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+        
+        .alert-severity.high {
+            background-color: rgba(255, 99, 71, 0.2);
+            color: #ff6347;
+        }
+        
+        .alert-severity.medium {
+            background-color: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+        
+        .alert-severity.low {
+            background-color: rgba(100, 255, 218, 0.2);
+            color: #64ffda;
+        }
+        
+        .alert-time {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+        
+        .alert-message {
+            color: #e0e0e0;
+        }
+        
+        .device-list {
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        
+        .device-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #233554;
+        }
+        
+        .device-item:last-child {
+            border-bottom: none;
+        }
+        
+        .device-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .device-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(100, 255, 218, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: #64ffda;
+        }
+        
+        .device-name {
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        
+        .device-ip {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+        
+        .device-status {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-indicator.online {
+            background-color: #64ffda;
+        }
+        
+        .status-indicator.offline {
+            background-color: #ff6347;
+        }
+        
+        .status-text {
+            font-size: 0.9rem;
+        }
+        
+        .status-text.online {
+            color: #64ffda;
+        }
+        
+        .status-text.offline {
+            color: #ff6347;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(90deg, #64ffda, #48bfe3);
+            color: #0a192f;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto;
+        }
+        
+        .refresh-btn:hover {
+            background: linear-gradient(90deg, #48bfe3, #64ffda);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .network-map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureShield</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#tools">Tools</a></li>
+                    <li><a href="index.html#awareness">Awareness</a></li>
+                    <li>
+                        <a href="#" class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="account-dropdown">
+                            <a href="#" class="account-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="login.html">Login</a>
+                                <a href="signup.html">Sign Up</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="security-tip">
+        <p>Security Tip: Regularly monitor your network for unauthorized devices</p>
+    </div>
+
+    <main>
+        <section class="hero" style="height: auto; padding: 4rem 0;">
+            <div class="container">
+                <h1>Network Monitoring</h1>
+                <p>Monitor your network traffic and detect security threats in real-time</p>
+            </div>
+        </section>
+
+        <section class="tools" style="padding-top: 3rem;">
+            <div class="container">
+                <div class="tool-container">
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-wifi"></i> Network Status</h3>
+                            <div class="stat-value">Active</div>
+                            <div class="stat-label">Last checked: <span id="last-checked">Just now</span></div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-laptop"></i> Connected Devices</h3>
+                            <div class="stat-value" id="device-count">8</div>
+                            <div class="stat-label"><span id="new-devices">2</span> new devices today</div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Security Alerts</h3>
+                            <div class="stat-value" id="alert-count">3</div>
+                            <div class="stat-label"><span class="high-priority">1</span> high priority</div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-exchange-alt"></i> Traffic</h3>
+                            <div class="stat-value" id="traffic-value">2.4 GB</div>
+                            <div class="stat-label">In the last 24 hours</div>
+                        </div>
+                    </div>
+                    
+                    <div class="network-map">
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Network Map</h3>
+                        <div class="map-container" id="network-map">
+                            <!-- Network map will be generated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="traffic-chart">
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Network Traffic (Last 24 Hours)</h3>
+                        <div class="chart-container" id="traffic-chart">
+                            <!-- Chart will be generated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="alerts-container">
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Security Alerts</h3>
+                        
+                        <div class="alert-item high">
+                            <div class="alert-header">
+                                <div class="alert-title">Suspicious Login Attempt</div>
+                                <div class="alert-severity high">High</div>
+                            </div>
+                            <div class="alert-time">Today, 10:23 AM</div>
+                            <div class="alert-message">Multiple failed login attempts detected from IP 192.168.1.45 to admin panel</div>
+                        </div>
+                        
+                        <div class="alert-item medium">
+                            <div class="alert-header">
+                                <div class="alert-title">Unusual Traffic Pattern</div>
+                                <div class="alert-severity medium">Medium</div>
+                            </div>
+                            <div class="alert-time">Today, 08:17 AM</div>
+                            <div class="alert-message">Unusual outbound traffic detected from device "Office-PC-3" to unknown external server</div>
+                        </div>
+                        
+                        <div class="alert-item low">
+                            <div class="alert-header">
+                                <div class="alert-title">New Device Connected</div>
+                                <div class="alert-severity low">Low</div>
+                            </div>
+                            <div class="alert-time">Yesterday, 06:45 PM</div>
+                            <div class="alert-message">New device "Unknown-Smartphone" connected to the network</div>
+                        </div>
+                    </div>
+                    
+                    <div class="device-list">
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Connected Devices</h3>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">Main-Workstation</div>
+                                    <div class="device-ip">192.168.1.100</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-server"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">File-Server</div>
+                                    <div class="device-ip">192.168.1.5</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">iPhone-Alex</div>
+                                    <div class="device-ip">192.168.1.121</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-print"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">Office-Printer</div>
+                                    <div class="device-ip">192.168.1.25</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">Office-PC-3</div>
+                                    <div class="device-ip">192.168.1.110</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-tablet-alt"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">Unknown-Smartphone</div>
+                                    <div class="device-ip">192.168.1.187</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">Guest-Laptop</div>
+                                    <div class="device-ip">192.168.1.201</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator offline"></div>
+                                <div class="status-text offline">Offline</div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-item">
+                            <div class="device-info">
+                                <div class="device-icon">
+                                    <i class="fas fa-tv"></i>
+                                </div>
+                                <div>
+                                    <div class="device-name">Smart-TV</div>
+                                    <div class="device-ip">192.168.1.50</div>
+                                </div>
+                            </div>
+                            <div class="device-status">
+                                <div class="status-indicator online"></div>
+                                <div class="status-text online">Online</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="refresh-network" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh Network Status
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SecureShield</h3>
+                    <p>Protecting your digital world with cutting-edge security solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#tools">Tools</a></li>
+                        <li><a href="index.html#awareness">Awareness</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect With Us</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 SecureShield. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate network map
+            const networkMap = document.getElementById('network-map');
+            const devices = [
+                { id: 'router', name: 'Router', icon: 'fa-wifi', x: 50, y: 50 },
+                { id: 'server', name: 'File-Server', icon: 'fa-server', x: 25, y: 30 },
+                { id: 'workstation', name: 'Main-Workstation', icon: 'fa-laptop', x: 75, y: 30 },
+                { id: 'phone', name: 'iPhone-Alex', icon: 'fa-mobile-alt', x: 80, y: 70 },
+                { id: 'printer', name: 'Office-Printer', icon: 'fa-print', x: 20, y: 70 },
+                { id: 'pc3', name: 'Office-PC-3', icon: 'fa-laptop', x: 60, y: 20 },
+                { id: 'unknown', name: 'Unknown-Smartphone', icon: 'fa-tablet-alt', x: 40, y: 80 },
+                { id: 'tv', name: 'Smart-TV', icon: 'fa-tv', x: 30, y: 60 }
+            ];
+            
+            // Create device nodes
+            devices.forEach(device => {
+                const node = document.createElement('div');
+                node.className = 'device-node';
+                node.style.left = `${device.x}%`;
+                node.style.top = `${device.y}%`;
+                node.setAttribute('data-device', device.id);
+                node.setAttribute('title', device.name);
+                
+                const icon = document.createElement('i');
+                icon.className = `fas ${device.icon}`;
+                node.appendChild(icon);
+                
+                networkMap.appendChild(node);
+                
+                // Add tooltip functionality
+                node.addEventListener('mouseover', function() {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.backgroundColor = 'rgba(10, 25, 47, 0.9)';
+                    tooltip.style.color = '#e0e0e0';
+                    tooltip.style.padding = '0.5rem';
+                    tooltip.style.borderRadius = '5px';
+                    tooltip.style.fontSize = '0.8rem';
+                    tooltip.style.zIndex = '100';
+                    tooltip.style.left = `${device.x}%`;
+                    tooltip.style.top = `${device.y - 10}%`;
+                    tooltip.textContent = device.name;
+                    
+                    networkMap.appendChild(tooltip);
+                    this.tooltip = tooltip;
+                });
+                
+                node.addEventListener('mouseout', function() {
+                    if (this.tooltip) {
+                        networkMap.removeChild(this.tooltip);
+                        this.tooltip = null;
+                    }
+                });
+            });
+            
+            // Create connections between router and other devices
+            devices.forEach(device => {
+                if (device.id !== 'router') {
+                    const connection = document.createElement('div');
+                    connection.className = 'device-connection';
+                    
+                    // Calculate position and rotation for the connection line
+                    const routerDevice = devices.find(d => d.id === 'router');
+                    const startX = routerDevice.x;
+                    const startY = routerDevice.y;
+                    const endX = device.x;
+                    const endY = device.y;
+                    
+                    // Calculate distance and angle
+                    const dx = endX - startX;
+                    const dy = endY - startY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    // Position and rotate the connection line
+                    connection.style.width = `${distance}%`;
+                    connection.style.left = `${startX}%`;
+                    connection.style.top = `${startY}%`;
+                    connection.style.transform = `rotate(${angle}deg)`;
+                    
+                    networkMap.appendChild(connection);
+                }
+            });
+            
+            // Generate traffic chart
+            const trafficChart = document.getElementById('traffic-chart');
+            const hours = 24;
+            const barWidth = 100 / hours;
+            
+            for (let i = 0; i < hours; i++) {
+                // Generate random height for demonstration
+                const height = Math.floor(Math.random() * 70) + 10;
+                
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${height}%`;
+                bar.style.left = `${i * barWidth}%`;
+                bar.style.width = `${barWidth - 1}%`;
+                
+                const label = document.createElement('div');
+                label.className = 'chart-label';
+                label.textContent = `${i}h`;
+                label.style.left = `${i * barWidth}%`;
+                
+                trafficChart.appendChild(bar);
+                trafficChart.appendChild(label);
+            }
+            
+            // Refresh network button functionality
+            const refreshBtn = document.getElementById('refresh-network');
+            refreshBtn.addEventListener('click', function() {
+                // Show loading state
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+                this.disabled = true;
+                
+                // Simulate network refresh
+                setTimeout(() => {
+                    // Update last checked time
+                    document.getElementById('last-checked').textContent = 'Just now';
+                    
+                    // Randomly update some stats for demonstration
+                    const newDeviceCount = Math.floor(Math.random() * 3) + 7;
+                    document.getElementById('device-count').textContent = newDeviceCount;
+                    
+                    const newAlertCount = Math.floor(Math.random() * 2) + 2;
+                    document.getElementById('alert-count').textContent = newAlertCount;
+                    
+                    const newTraffic = (Math.random() * 3 + 1).toFixed(1);
+                    document.getElementById('traffic-value').textContent = `${newTraffic} GB`;
+                    
+                    // Reset button
+                    this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Network Status';
+                    this.disabled = false;
+                    
+                    // Show success message
+                    alert('Network status refreshed successfully!');
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

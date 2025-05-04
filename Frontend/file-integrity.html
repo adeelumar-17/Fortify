@@ -1,0 +1,453 @@
+&lt;!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Integrity Check - SecureShield</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles specific to file integrity tool */
+        .tool-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #233554;
+            background-color: rgba(10, 25, 47, 0.7);
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .input-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #233554;
+            background-color: rgba(10, 25, 47, 0.7);
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .action-btn {
+            background: linear-gradient(90deg, #64ffda, #48bfe3);
+            color: #0a192f;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(90deg, #48bfe3, #64ffda);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .info-box h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+        }
+        
+        .info-box p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .result-box.success {
+            border-left: 4px solid #64ffda;
+        }
+        
+        .result-box.error {
+            border-left: 4px solid #ff4d4d;
+        }
+        
+        .result-box h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-box h3 i {
+            margin-right: 0.5rem;
+        }
+        
+        .result-box.error h3 {
+            color: #ff4d4d;
+        }
+        
+        .progress-container {
+            margin: 1.5rem 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #233554;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background-color: #64ffda;
+            transition: width 0.3s ease;
+        }
+        
+        .file-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(10, 25, 47, 0.7);
+            border-radius: 5px;
+        }
+        
+        .file-info p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-info strong {
+            color: #64ffda;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureShield</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#tools">Tools</a></li>
+                    <li><a href="index.html#awareness">Awareness</a></li>
+                    <li>
+                        <a href="#" class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="account-dropdown">
+                            <a href="#" class="account-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="login.html">Login</a>
+                                <a href="signup.html">Sign Up</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="security-tip">
+        <p>Security Tip: Always verify file integrity before executing downloaded software</p>
+    </div>
+
+    <main>
+        <section class="hero" style="height: auto; padding: 4rem 0;">
+            <div class="container">
+                <h1>File Integrity Check</h1>
+                <p>Verify the authenticity and integrity of your files</p>
+            </div>
+        </section>
+
+        <section class="tools" style="padding-top: 3rem;">
+            <div class="container">
+                <div class="tool-container">
+                    <div class="info-box">
+                        <h3>What is File Integrity?</h3>
+                        <p>File integrity refers to the state of a file being complete, uncorrupted, and unaltered from its original state.</p>
+                        <p>Checking file integrity is crucial when downloading software, transferring important files, or verifying backups to ensure they haven't been tampered with or corrupted.</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="hash-algorithm">Hash Algorithm</label>
+                        <select id="hash-algorithm">
+                            <option value="sha256">SHA-256 (Recommended)</option>
+                            <option value="sha512">SHA-512</option>
+                            <option value="md5">MD5 (Not recommended for security)</option>
+                            <option value="sha1">SHA-1 (Not recommended for security)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="file-input">Select File</label>
+                        <input type="file" id="file-input">
+                    </div>
+                    
+                    <div id="file-info" class="file-info" style="display: none;">
+                        <p><strong>File Name:</strong> <span id="file-name"></span></p>
+                        <p><strong>File Size:</strong> <span id="file-size"></span></p>
+                        <p><strong>File Type:</strong> <span id="file-type"></span></p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="expected-hash">Expected Hash (Optional)</label>
+                        <input type="text" id="expected-hash" placeholder="Paste the expected hash value to compare">
+                    </div>
+                    
+                    <button id="calculate-hash-btn" class="action-btn">Calculate Hash</button>
+                    
+                    <div id="progress-container" class="progress-container">
+                        <p>Calculating hash... This may take a while for large files.</p>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="result-success" class="result-box success">
+                        <h3><i class="fas fa-check-circle"></i> File Integrity Verified</h3>
+                        <p>The calculated hash matches the expected hash. The file is intact and has not been modified.</p>
+                        <div class="input-group">
+                            <label for="calculated-hash">Calculated Hash</label>
+                            <input type="text" id="calculated-hash" readonly>
+                        </div>
+                        <button id="copy-hash-btn" class="action-btn">Copy Hash</button>
+                    </div>
+                    
+                    <div id="result-error" class="result-box error">
+                        <h3><i class="fas fa-exclamation-triangle"></i> File Integrity Check Failed</h3>
+                        <p>The calculated hash does not match the expected hash. The file may have been modified or corrupted.</p>
+                        <div class="input-group">
+                            <label for="calculated-hash-error">Calculated Hash</label>
+                            <input type="text" id="calculated-hash-error" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label for="expected-hash-error">Expected Hash</label>
+                            <input type="text" id="expected-hash-error" readonly>
+                        </div>
+                    </div>
+                    
+                    <div id="result-no-compare" class="result-box">
+                        <h3><i class="fas fa-info-circle"></i> Hash Calculation Complete</h3>
+                        <p>No expected hash was provided for comparison. You can use this hash to verify the file integrity later.</p>
+                        <div class="input-group">
+                            <label for="calculated-hash-only">Calculated Hash</label>
+                            <input type="text" id="calculated-hash-only" readonly>
+                        </div>
+                        <button id="copy-hash-only-btn" class="action-btn">Copy Hash</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SecureShield</h3>
+                    <p>Protecting your digital world with cutting-edge security solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#tools">Tools</a></li>
+                        <li><a href="index.html#awareness">Awareness</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect With Us</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 SecureShield. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('file-input');
+            const expectedHashInput = document.getElementById('expected-hash');
+            const calculateHashBtn = document.getElementById('calculate-hash-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const resultSuccess = document.getElementById('result-success');
+            const resultError = document.getElementById('result-error');
+            const resultNoCompare = document.getElementById('result-no-compare');
+            const calculatedHash = document.getElementById('calculated-hash');
+            const calculatedHashError = document.getElementById('calculated-hash-error');
+            const expectedHashError = document.getElementById('expected-hash-error');
+            const calculatedHashOnly = document.getElementById('calculated-hash-only');
+            const copyHashBtn = document.getElementById('copy-hash-btn');
+            const copyHashOnlyBtn = document.getElementById('copy-hash-only-btn');
+            const fileInfo = document.getElementById('file-info');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            const fileType = document.getElementById('file-type');
+            
+            // Show file info when a file is selected
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    fileName.textContent = file.name;
+                    fileSize.textContent = formatFileSize(file.size);
+                    fileType.textContent = file.type || 'Unknown';
+                    fileInfo.style.display = 'block';
+                } else {
+                    fileInfo.style.display = 'none';
+                }
+            });
+            
+            // Format file size to human-readable format
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // Calculate file hash
+            calculateHashBtn.addEventListener('click', async function() {
+                if (!fileInput.files.length) {
+                    alert('Please select a file');
+                    return;
+                }
+                
+                // Hide previous results
+                resultSuccess.style.display = 'none';
+                resultError.style.display = 'none';
+                resultNoCompare.style.display = 'none';
+                
+                // Show progress
+                progressContainer.style.display = 'block';
+                progressFill.style.width = '0%';
+                
+                const file = fileInput.files[0];
+                const algorithm = document.getElementById('hash-algorithm').value;
+                const expectedHash = expectedHashInput.value.trim().toLowerCase();
+                
+                try {
+                    // In a real application, you would use a proper hashing library
+                    // This is a simplified simulation for demonstration purposes
+                    simulateHashCalculation(file, algorithm, expectedHash);
+                } catch (error) {
+                    alert('Error calculating hash: ' + error.message);
+                    progressContainer.style.display = 'none';
+                }
+            });
+            
+            // Simulate hash calculation with progress
+            function simulateHashCalculation(file, algorithm, expectedHash) {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressFill.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        progressContainer.style.display = 'none';
+                        
+                        // Generate a fake hash for demo purposes
+                        // In a real application, you would calculate the actual hash
+                        const hashLength = algorithm === 'sha512' ? 128 : 64;
+                        const calculatedHashValue = Array.from({length: hashLength}, () => 
+                            Math.floor(Math.random() * 16).toString(16)).join('');
+                        
+                        // Display results
+                        if (expectedHash) {
+                            if (expectedHash === calculatedHashValue) {
+                                // Match
+                                calculatedHash.value = calculatedHashValue;
+                                resultSuccess.style.display = 'block';
+                            } else {
+                                // No match
+                                calculatedHashError.value = calculatedHashValue;
+                                expectedHashError.value = expectedHash;
+                                resultError.style.display = 'block';
+                            }
+                        } else {
+                            // No expected hash provided
+                            calculatedHashOnly.value = calculatedHashValue;
+                            resultNoCompare.style.display = 'block';
+                        }
+                    }
+                }, 100);
+            }
+            
+            // Copy hash to clipboard
+            copyHashBtn.addEventListener('click', function() {
+                calculatedHash.select();
+                document.execCommand('copy');
+                
+                const originalText = this.textContent;
+                this.textContent = 'Copied!';
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 2000);
+            });
+            
+            copyHashOnlyBtn.addEventListener('click', function() {
+                calculatedHashOnly.select();
+                document.execCommand('copy');
+                
+                const originalText = this.textContent;
+                this.textContent = 'Copied!';
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

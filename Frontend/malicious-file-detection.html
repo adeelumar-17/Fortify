@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malicious File Detection - SecureShield</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles specific to malicious file detection tool */
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .upload-area {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 3rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 2px dashed #3a506b;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area.drag-over {
+            border-color: #64ffda;
+            background: linear-gradient(135deg, #1e2d45, #233554);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: #64ffda;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area p {
+            color: #8892b0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            border: none;
+            background-color: #64ffda;
+            color: #0a192f;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .upload-btn:hover {
+            background-color: #4fd1b5;
+            transform: translateY(-2px);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .scan-options {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .scan-options h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-item input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: #64ffda;
+        }
+        
+        .option-item label {
+            color: #ccd6f6;
+        }
+        
+        .scan-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            border: none;
+            background-color: #64ffda;
+            color: #0a192f;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: block;
+            width: 100%;
+        }
+        
+        .scan-button:hover {
+            background-color: #4fd1b5;
+            transform: translateY(-2px);
+        }
+        
+        .scan-button:disabled {
+            background-color: #3a506b;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-panel {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .results-panel h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .results-panel h3 .controls {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .results-panel h3 .controls button {
+            background: none;
+            border: none;
+            color: #64ffda;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .results-panel h3 .controls button:hover {
+            color: #4fd1b5;
+            transform: translateY(-2px);
+        }
+        
+        .scan-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-item {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-item.clean {
+            background-color: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+        
+        .summary-item.suspicious {
+            background-color: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        
+        .summary-item.malicious {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .summary-item i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-item.clean i {
+            color: #4ade80;
+        }
+        
+        .summary-item.suspicious i {
+            color: #fbbf24;
+        }
+        
+        .summary-item.malicious i {
+            color: #ef4444;
+        }
+        
+        .summary-item .count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-item.clean .count {
+            color: #4ade80;
+        }
+        
+        .summary-item.suspicious .count {
+            color: #fbbf24;
+        }
+        
+        .summary-item.malicious .count {
+            color: #ef4444;
+        }
+        
+        .summary-item .label {
+            color: #ccd6f6;
+        }
+        
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .file-item {
+            padding: 1rem;
+            border-left: 4px solid;
+            margin-bottom: 0.75rem;
+            background-color: rgba(58, 80, 107, 0.3);
+            border-radius: 0 5px 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .file-item.clean {
+            border-left-color: #4ade80;
+        }
+        
+        .file-item.suspicious {
+            border-left-color: #fbbf24;
+        }
+        
+        .file-item.malicious {
+            border-left-color: #ef4444;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .file-item.clean .file-icon {
+            color: #4ade80;
+        }
+        
+        .file-item.suspicious .file-icon {
+            color: #fbbf24;
+        }
+        
+        .file-item.malicious .file-icon {
+            color: #ef4444;
+        }
+        
+        .file-details h4 {
+            color: #ccd6f6;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .file-meta {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        
+        .file-actions button {
+            background: none;
+            border: none;
+            color: #64ffda;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .file-actions button:hover {
+            color: #4fd1b5;
+            transform: translateY(-2px);
+        }
+        
+        .file-details-panel {
+            background-color: rgba(10, 25, 47, 0.5);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 0.75rem;
+            display: none;
+        }
+        
+        .file-item.expanded .file-details-panel {
+            display: block;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-label {
+            color: #64ffda;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            color: #ccd6f6;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .threat-indicators {
+            margin-top: 1rem;
+        }
+        
+        .threat-indicators h5 {
+            color: #64ffda;
+            margin-bottom: 0.5rem;
+        }
+        
+        .indicator-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .indicator-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #ccd6f6;
+        }
+        
+        .indicator-item i {
+            margin-right: 0.5rem;
+        }
+        
+        .indicator-item.detected i {
+            color: #ef4444;
+        }
+        
+        .indicator-item.clean i {
+            color: #4ade80;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #0a192f;
+            border-radius: 5px;
+            margin: 2rem 0;
+            overflow: hidden;
+            height: 20px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #64ffda, #48bfe3);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a192f;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .scanning-status {
+            text-align: center;
+            color: #ccd6f6;
+            margin-bottom: 2rem;
+        }
+        
+        .scanning-status i {
+            font-size: 1.5rem;
+            color: #64ffda;
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .scan-summary {
+                flex-direction: column;
+            }
+            
+            .summary-item {
+                min-width: 100%;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .file-actions {
+                margin-top: 1rem;
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureShield</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#tools">Tools</a></li>
+                    <li><a href="index.html#awareness">Awareness</a></li>
+                    <li>
+                        <a href="#" class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="account-dropdown">
+                            <a href="#" class="account-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="login.html">Login</a>
+                                <a href="signup.html">Sign Up</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="security-tip">
+        <p>Security Tip: Never open email attachments from unknown senders</p>
+    </div>
+
+    <main>
+        <section class="tool-header">
+            <div class="container">
+                <h1><i class="fas fa-virus-slash"></i> Malicious File Detection</h1>
+                <p>Scan files for malware, viruses, and other threats</p>
+            </div>
+        </section>
+
+        <section class="tool-container">
+            <div class="upload-area" id="upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Upload Files for Scanning</h3>
+                <p>Drag and drop files here or click the button below</p>
+                <label for="file-input" class="upload-btn">Select Files</label>
+                <input type="file" id="file-input" class="file-input" multiple>
+            </div>
+
+            <div class="scan-options">
+                <h3><i class="fas fa-cog"></i> Scan Options</h3>
+                <div class="options-grid">
+                    <div class="option-item">
+                        <input type="checkbox" id="option-deep" checked>
+                        <label for="option-deep">Deep Scan</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="option-archive" checked>
+                        <label for="option-archive">Scan Archives</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="option-heuristic" checked>
+                        <label for="option-heuristic">Heuristic Analysis</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="option-sandbox">
+                        <label for="option-sandbox">Sandbox Execution</label>
+                    </div>
+                </div>
+                <button id="scan-button" class="scan-button" disabled>Start Scan</button>
+            </div>
+
+            <div class="results-panel" id="scanning-panel">
+                <h3><i class="fas fa-spinner fa-spin"></i> Scanning in Progress</h3>
+                <div class="scanning-status">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span id="scanning-status-text">Initializing scan...</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="scan-progress" style="width: 0%">0%</div>
+                </div>
+            </div>
+
+            <div class="results-panel" id="results-panel">
+                <h3>
+                    <span><i class="fas fa-clipboard-check"></i> Scan Results</span>
+                    <div class="controls">
+                        <button id="export-results" title="Export"><i class="fas fa-download"></i></button>
+                        <button id="new-scan" title="New Scan"><i class="fas fa-redo"></i></button>
+                    </div>
+                </h3>
+                <div class="scan-summary">
+                    <div class="summary-item clean">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="count" id="clean-count">0</div>
+                        <div class="label">Clean Files</div>
+                    </div>
+                    <div class="summary-item suspicious">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div class="count" id="suspicious-count">0</div>
+                        <div class="label">Suspicious Files</div>
+                    </div>
+                    <div class="summary-item malicious">
+                        <i class="fas fa-times-circle"></i>
+                        <div class="count" id="malicious-count">0</div>
+                        <div class="label">Malicious Files</div>
+                    </div>
+                </div>
+                <ul class="file-list" id="file-list">
+                    <!-- Scan results will be populated by JavaScript -->
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SecureShield</h3>
+                    <p>Protecting your digital world with cutting-edge security solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#tools">Tools</a></li>
+                        <li><a href="index.html#awareness">Awareness</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect With Us</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 SecureShield. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const scanButton = document.getElementById('scan-button');
+            const scanningPanel = document.getElementById('scanning-panel');
+            const resultsPanel = document.getElementById('results-panel');
+            const scanProgress = document.getElementById('scan-progress');
+            const scanningStatusText = document.getElementById('scanning-status-text');
+            const fileList = document.getElementById('file-list');
+            const cleanCount = document.getElementById('clean-count');
+            const suspiciousCount = document.getElementById('suspicious-count');
+            const maliciousCount = document.getElementById('malicious-count');
+            const exportResults = document.getElementById('export-results');
+            const newScan = document.getElementById('new-scan');
+            
+            let selectedFiles = [];
+            
+            // Handle drag and drop events
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+            
+            // Handle file selection via button
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    handleFiles(fileInput.files);
+                }
+            });
+            
+            // Handle scan button click
+            scanButton.addEventListener('click', function() {
+                startScan();
+            });
+            
+            // Handle new scan button click
+            newScan.addEventListener('click', function() {
+                resetScan();
+            });
+            
+            // Handle export results button click
+            exportResults.addEventListener('click', function() {
+                exportScanResults();
+            });
+            
+            function handleFiles(files) {
+                selectedFiles = Array.from(files);
+                
+                // Enable scan button if files are selected
+                if (selectedFiles.length > 0) {
+                    scanButton.disabled = false;
+                    scanButton.textContent = `Scan ${selectedFiles.length} File${selectedFiles.length > 1 ? 's' : ''}`;
+                } else {
+                    scanButton.disabled = true;
+                    scanButton.textContent = 'Start Scan';
+                }
+            }
+            
+            function startScan() {
+                // Show scanning panel
+                scanningPanel.style.display = 'block';
+                resultsPanel.style.display = 'none';
+                
+                // Reset progress
+                scanProgress.style.width = '0%';
+                scanProgress.textContent = '0%';
+                
+                // Simulate scanning process
+                let progress = 0;
+                const totalFiles = selectedFiles.length;
+                let currentFile = 0;
+                
+                const scanInterval = setInterval(function() {
+                    if (progress >= 100) {
+                        clearInterval(scanInterval);
+                        showResults();
+                        return;
+                    }
+                    
+                    progress += 1;
+                    scanProgress.style.width = `${progress}%`;
+                    scanProgress.textContent = `${progress}%`;
+                    
+                    if (progress % (100 / totalFiles) === 0 && currentFile < totalFiles) {
+                        currentFile++;
+                        scanningStatusText.textContent = `Scanning file ${currentFile} of ${totalFiles}: ${selectedFiles[currentFile - 1].name}`;
+                    }
+                    
+                    if (progress === 25) {
+                        scanningStatusText.textContent = 'Analyzing file signatures...';
+                    } else if (progress === 50) {
+                        scanningStatusText.textContent = 'Performing heuristic analysis...';
+                    } else if (progress === 75) {
+                        scanningStatusText.textContent = 'Checking against threat database...';
+                    } else if (progress === 95) {
+                        scanningStatusText.textContent = 'Finalizing results...';
+                    }
+                }, 50);
+            }
+            
+            function showResults() {
+                // Hide scanning panel and show results panel
+                scanningPanel.style.display = 'none';
+                resultsPanel.style.display = 'block';
+                
+                // Generate random results for demonstration
+                const clean = Math.floor(Math.random() * selectedFiles.length);
+                const malicious = Math.floor(Math.random() * (selectedFiles.length - clean));
+                const suspicious = selectedFiles.length - clean - malicious;
+                
+                // Update summary counts
+                cleanCount.textContent = clean;
+                suspiciousCount.textContent = suspicious;
+                maliciousCount.textContent = malicious;
+                
+                // Clear previous results
+                fileList.innerHTML = '';
+                
+                // Add file results
+                let fileIndex = 0;
+                
+                // Add clean files
+                for (let i = 0; i < clean; i++) {
+                    if (fileIndex < selectedFiles.length) {
+                        addFileResult(selectedFiles[fileIndex], 'clean');
+                        fileIndex++;
+                    }
+                }
+                
+                // Add suspicious files
+                for (let i = 0; i < suspicious; i++) {
+                    if (fileIndex < selectedFiles.length) {
+                        addFileResult(selectedFiles[fileIndex], 'suspicious');
+                        fileIndex++;
+                    }
+                }
+                
+                // Add malicious files
+                for (let i = 0; i < malicious; i++) {
+                    if (fileIndex < selectedFiles.length) {
+                        addFileResult(selectedFiles[fileIndex], 'malicious');
+                        fileIndex++;
+                    }
+                }
+            }
+            
+            function addFileResult(file, status) {
+                const fileItem = document.createElement('li');
+                fileItem.className = `file-item ${status}`;
+                
+                // Get file icon based on type
+                let fileIcon = 'fa-file';
+                if (file.type.includes('image')) {
+                    fileIcon = 'fa-file-image';
+                } else if (file.type.includes('pdf')) {
+                    fileIcon = 'fa-file-pdf';
+                } else if (file.type.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                    fileIcon = 'fa-file-word';
+                } else if (file.type.includes('excel') || file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
+                    fileIcon = 'fa-file-excel';
+                } else if (file.type.includes('zip') || file.name.endsWith('.zip') || file.name.endsWith('.rar')) {
+                    fileIcon = 'fa-file-archive';
+                } else if (file.type.includes('text')) {
+                    fileIcon = 'fa-file-alt';
+                } else if (file.name.endsWith('.exe') || file.name.endsWith('.dll')) {
+                    fileIcon = 'fa-file-code';
+                }
+                
+                // Get status text and details
+                let statusText = 'Clean';
+                let threatDetails = [];
+                
+                if (status === 'suspicious') {
+                    statusText = 'Suspicious';
+                    threatDetails = [
+                        'Unusual file permissions',
+                        'Contains obfuscated code',
+                        'Attempts to access system directories'
+                    ];
+                } else if (status === 'malicious') {
+                    statusText = 'Malicious';
+                    threatDetails = [
+                        'Known malware signature detected',
+                        'Contains trojan payload',
+                        'Attempts to disable security software',
+                        'Connects to known malicious servers'
+                    ];
+                }
+                
+                // Create file item HTML
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-icon">
+                            <i class="fas ${fileIcon}"></i>
+                        </div>
+                        <div class="file-details">
+                            <h4>${file.name}</h4>
+                            <div class="file-meta">
+                                ${(file.size / 1024).toFixed(2)} KB • ${status === 'clean' ? 'No threats detected' : statusText}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="details-toggle" title="View Details"><i class="fas fa-info-circle"></i></button>
+                        ${status !== 'clean' ? '<button class="quarantine-btn" title="Quarantine"><i class="fas fa-shield-alt"></i></button>' : ''}
+                    </div>
+                    <div class="file-details-panel">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">File Name</div>
+                                <div class="detail-value">${file.name}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">File Size</div>
+                                <div class="detail-value">${(file.size / 1024).toFixed(2)} KB</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">File Type</div>
+                                <div class="detail-value">${file.type || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Last Modified</div>
+                                <div class="detail-value">${new Date(file.lastModified).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        ${status !== 'clean' ? `
+                            <div class="threat-indicators">
+                                <h5>Threat Indicators</h5>
+                                <ul class="indicator-list">
+                                    ${threatDetails.map(threat => `
+                                        <li class="indicator-item detected">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            ${threat}
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        ` : `
+                            <div class="threat-indicators">
+                                <h5>Security Check</h5>
+                                <ul class="indicator-list">
+                                    <li class="indicator-item clean">
+                                        <i class="fas fa-check-circle"></i>
+                                        No malicious code detected
+                                    </li>
+                                    <li class="indicator-item clean">
+                                        <i class="fas fa-check-circle"></i>
+                                        File signature verified
+                                    </li>
+                                    <li class="indicator-item clean">
+                                        <i class="fas fa-check-circle"></i>
+                                        No suspicious behavior detected
+                                    </li>
+                                </ul>
+                            </div>
+                        `}
+                    </div>
+                `;
+                
+                fileList.appendChild(fileItem);
+                
+                // Add event listener to details toggle button
+                const detailsToggle = fileItem.querySelector('.details-toggle');
+                detailsToggle.addEventListener('click', function() {
+                    fileItem.classList.toggle('expanded');
+                });
+                
+                // Add event listener to quarantine button if present
+                const quarantineBtn = fileItem.querySelector('.quarantine-btn');
+                if (quarantineBtn) {
+                    quarantineBtn.addEventListener('click', function() {
+                        alert(`File "${file.name}" has been quarantined.`);
+                        fileItem.style.opacity = '0.5';
+                        quarantineBtn.disabled = true;
+                        quarantineBtn.title = 'Quarantined';
+                    });
+                }
+            }
+            
+            function resetScan() {
+                // Reset file selection
+                selectedFiles = [];
+                fileInput.value = '';
+                
+                // Reset scan button
+                scanButton.disabled = true;
+                scanButton.textContent = 'Start Scan';
+                
+                // Hide results panel
+                scanningPanel.style.display = 'none';
+                resultsPanel.style.display = 'none';
+            }
+            
+            function exportScanResults() {
+                alert('Scan results exported to report.pdf');
+            }
+        });
+    </script>
+</body>
+</html>

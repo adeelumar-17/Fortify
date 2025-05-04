@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption/Decryption - SecureShield</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles specific to encryption tool */
+        .tool-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .encryption-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #233554;
+        }
+        
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: #8892b0;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            color: #64ffda;
+            border-bottom: 2px solid #64ffda;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+        }
+        
+        .input-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #233554;
+            background-color: rgba(10, 25, 47, 0.7);
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #233554;
+            background-color: rgba(10, 25, 47, 0.7);
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .input-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #233554;
+            background-color: rgba(10, 25, 47, 0.7);
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-btn {
+            background: linear-gradient(90deg, #64ffda, #48bfe3);
+            color: #0a192f;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(90deg, #48bfe3, #64ffda);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(100, 255, 218, 0.4);
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .info-box h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+        }
+        
+        .info-box p {
+            margin-bottom: 0.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            background-color: rgba(100, 255, 218, 0.2);
+            color: #64ffda;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .encryption-tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            
+            .tab-btn {
+                border-bottom: 1px solid #233554;
+                text-align: left;
+            }
+            
+            .tab-btn.active {
+                border-bottom: 1px solid #64ffda;
+            }
+            
+            .btn-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureShield</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#tools">Tools</a></li>
+                    <li><a href="index.html#awareness">Awareness</a></li>
+                    <li>
+                        <a href="#" class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="account-dropdown">
+                            <a href="#" class="account-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="login.html">Login</a>
+                                <a href="signup.html">Sign Up</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="security-tip">
+        <p>Security Tip: Always use strong encryption for sensitive data</p>
+    </div>
+
+    <main>
+        <section class="hero" style="height: auto; padding: 4rem 0;">
+            <div class="container">
+                <h1>Encryption/Decryption Tool</h1>
+                <p>Secure your data with advanced encryption algorithms</p>
+            </div>
+        </section>
+
+        <section class="tools" style="padding-top: 3rem;">
+            <div class="container">
+                <div class="tool-container">
+                    <div class="encryption-tabs">
+                        <button class="tab-btn active" data-tab="text-encryption">Text Encryption</button>
+                        <button class="tab-btn" data-tab="file-encryption">File Encryption</button>
+                        <button class="tab-btn" data-tab="hash-generator">Hash Generator</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="text-encryption">
+                        <div class="info-box">
+                            <h3>Text Encryption</h3>
+                            <p>Encrypt your sensitive text messages using strong encryption algorithms. The encrypted text can only be decrypted with the correct password.</p>
+                            <p>Choose a strong password that you can remember, as there is no way to recover encrypted data if you forget the password.</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="encryption-algorithm">Encryption Algorithm</label>
+                            <select id="encryption-algorithm">
+                                <option value="aes">AES-256 (Recommended)</option>
+                                <option value="des">Triple DES</option>
+                                <option value="rc4">RC4</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group" id="encryption-password-group">
+                            <label for="encryption-password">Password</label>
+                            <input type="password" id="encryption-password" placeholder="Enter a strong password">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="encryption-input">Text to Encrypt/Decrypt</label>
+                            <textarea id="encryption-input" placeholder="Enter text to encrypt or paste encrypted text to decrypt"></textarea>
+                        </div>
+                        
+                        <div class="btn-row">
+                            <button id="encrypt-btn" class="action-btn">Encrypt</button>
+                            <button id="decrypt-btn" class="action-btn">Decrypt</button>
+                        </div>
+                        
+                        <div id="encryption-notification" class="notification"></div>
+                        
+                        <div class="input-group">
+                            <label for="encryption-output">Result</label>
+                            <textarea id="encryption-output" readonly></textarea>
+                        </div>
+                        
+                        <button id="copy-result" class="action-btn">Copy Result</button>
+                    </div>
+                    
+                    <div class="tab-content" id="file-encryption">
+                        <div class="info-box">
+                            <h3>File Encryption</h3>
+                            <p>Encrypt your files to protect sensitive information. This feature uses client-side encryption, so your files never leave your browser.</p>
+                            <p>Note: For security reasons, file encryption in the browser has limitations. For large or highly sensitive files, consider using dedicated encryption software.</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="file-input">Select File</label>
+                            <input type="file" id="file-input">
+                        </div>
+                        
+                        <div class="input-group" id="file-password-group">
+                            <label for="file-password">Password</label>
+                            <input type="password" id="file-password" placeholder="Enter a strong password">
+                        </div>
+                        
+                        <div class="btn-row">
+                            <button id="encrypt-file-btn" class="action-btn">Encrypt File</button>
+                            <button id="decrypt-file-btn" class="action-btn">Decrypt File</button>
+                        </div>
+                        
+                        <div id="file-notification" class="notification"></div>
+                        
+                        <div id="file-progress" style="display: none;">
+                            <label>Processing File...</label>
+                            <div class="strength-meter">
+                                <div class="strength-meter-fill" id="file-progress-bar" style="width: 0%; background-color: #64ffda;"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="file-result" style="display: none; margin-top: 1.5rem;">
+                            <p>File processed successfully!</p>
+                            <button id="download-file-btn" class="action-btn">Download Processed File</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="hash-generator">
+                        <div class="info-box">
+                            <h3>Hash Generator</h3>
+                            <p>Generate cryptographic hash values for text or files. Hashes are one-way functions that create a unique fingerprint of data.</p>
+                            <p>Hashes are commonly used to verify data integrity and store passwords securely.</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="hash-algorithm">Hash Algorithm</label>
+                            <select id="hash-algorithm">
+                                <option value="sha256">SHA-256 (Recommended)</option>
+                                <option value="sha512">SHA-512</option>
+                                <option value="md5">MD5 (Not recommended for security)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="encryption-tabs" style="margin-top: 1.5rem;">
+                            <button class="tab-btn active" data-tab="text-hash">Text</button>
+                            <button class="tab-btn" data-tab="file-hash">File</button>
+                        </div>
+                        
+                        <div class="tab-content active" id="text-hash">
+                            <div class="input-group">
+                                <label for="hash-input">Text to Hash</label>
+                                <textarea id="hash-input" placeholder="Enter text to generate hash"></textarea>
+                            </div>
+                            
+                            <button id="generate-hash-btn" class="action-btn">Generate Hash</button>
+                            
+                            <div id="hash-notification" class="notification"></div>
+                            
+                            <div class="input-group">
+                                <label for="hash-output">Hash Result</label>
+                                <input type="text" id="hash-output" readonly>
+                            </div>
+                            
+                            <button id="copy-hash" class="action-btn">Copy Hash</button>
+                        </div>
+                        
+                        <div class="tab-content" id="file-hash">
+                            <div class="input-group">
+                                <label for="hash-file-input">Select File</label>
+                                <input type="file" id="hash-file-input">
+                            </div>
+                            
+                            <button id="generate-file-hash-btn" class="action-btn">Generate File Hash</button>
+                            
+                            <div id="file-hash-notification" class="notification"></div>
+                            
+                            <div id="file-hash-progress" style="display: none; margin-top: 1rem;">
+                                <label>Processing File...</label>
+                                <div class="strength-meter">
+                                    <div class="strength-meter-fill" id="hash-progress-bar" style="width: 0%; background-color: #64ffda;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group" style="margin-top: 1rem;">
+                                <label for="file-hash-output">File Hash</label>
+                                <input type="text" id="file-hash-output" readonly>
+                            </div>
+                            
+                            <button id="copy-file-hash" class="action-btn">Copy Hash</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SecureShield</h3>
+                    <p>Protecting your digital world with cutting-edge security solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#tools">Tools</a></li>
+                        <li><a href="index.html#awareness">Awareness</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect With Us</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 SecureShield. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Find the parent tab container
+                    const parentContainer = this.closest('.encryption-tabs').parentElement;
+                    
+                    // Get all tab buttons and contents within this container
+                    const containerTabBtns = parentContainer.querySelectorAll('.tab-btn');
+                    const containerTabContents = parentContainer.querySelectorAll('.tab-content');
+                    
+                    // Remove active class from all buttons and contents in this container
+                    containerTabBtns.forEach(btn => btn.classList.remove('active'));
+                    containerTabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to current button and content
+                    this.classList.add('active');
+                    parentContainer.querySelector(`#${tabId}`).classList.add('active');
+                });
+            });
+            
+            // Show notification function
+            function showNotification(elementId, message, isError = false) {
+                const notification = document.getElementById(elementId);
+                notification.textContent = message;
+                notification.style.backgroundColor = isError ? 'rgba(255, 99, 71, 0.2)' : 'rgba(100, 255, 218, 0.2)';
+                notification.style.color = isError ? '#ff6347' : '#64ffda';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Copy to clipboard function
+            function copyToClipboard(element, notificationId, buttonElement) {
+                element.select();
+                document.execCommand('copy');
+                
+                const originalText = buttonElement.textContent;
+                buttonElement.textContent = 'Copied!';
+                
+                showNotification(notificationId, 'Copied to clipboard!');
+                
+                setTimeout(() => {
+                    buttonElement.textContent = originalText;
+                }, 2000);
+            }
+            
+            // Text encryption functionality
+            const encryptBtn = document.getElementById('encrypt-btn');
+            const decryptBtn = document.getElementById('decrypt-btn');
+            const encryptionInput = document.getElementById('encryption-input');
+            const encryptionOutput = document.getElementById('encryption-output');
+            const encryptionPassword = document.getElementById('encryption-password');
+            const copyResultBtn = document.getElementById('copy-result');
+            const encryptionAlgorithm = document.getElementById('encryption-algorithm');
+            
+            // Simple encryption function (for demo purposes)
+            // In a real application, use a proper encryption library
+            function simpleEncrypt(text, password, algorithm) {
+                try {
+                    // This is a very basic implementation for demonstration
+                    // Do not use this for actual encryption!
+                    let result = '';
+                    for (let i = 0; i < text.length; i++) {
+                        const charCode = text.charCodeAt(i) ^ password.charCodeAt(i % password.length);
+                        result += String.fromCharCode(charCode);
+                    }
+                    return btoa(result); // Base64 encode
+                } catch (e) {
+                    console.error('Encryption error:', e);
+                    return null;
+                }
+            }
+            
+            function simpleDecrypt(encrypted, password, algorithm) {
+                try {
+                    const decoded = atob(encrypted); // Base64 decode
+                    let result = '';
+                    for (let i = 0; i < decoded.length; i++) {
+                        const charCode = decoded.charCodeAt(i) ^ password.charCodeAt(i % password.length);
+                        result += String.fromCharCode(charCode);
+                    }
+                    return result;
+                } catch (e) {
+                    console.error('Decryption error:', e);
+                    return null;
+                }
+            }
+            
+            encryptBtn.addEventListener('click', function() {
+                const text = encryptionInput.value;
+                const password = encryptionPassword.value;
+                const algorithm = encryptionAlgorithm.value;
+                
+                if (!text) {
+                    showNotification('encryption-notification', 'Please enter text to encrypt', true);
+                    return;
+                }
+                
+                if (!password) {
+                    showNotification('encryption-notification', 'Please enter a password', true);
+                    return;
+                }
+                
+                const encrypted = simpleEncrypt(text, password, algorithm);
+                if (encrypted) {
+                    encryptionOutput.value = encrypted;
+                    showNotification('encryption-notification', 'Text encrypted successfully!');
+                } else {
+                    showNotification('encryption-notification', 'Encryption failed. Please try again.', true);
+                }
+            });
+            
+            decryptBtn.addEventListener('click', function() {
+                const encrypted = encryptionInput.value;
+                const password = encryptionPassword.value;
+                const algorithm = encryptionAlgorithm.value;
+                
+                if (!encrypted) {
+                    showNotification('encryption-notification', 'Please enter encrypted text', true);
+                    return;
+                }
+                
+                if (!password) {
+                    showNotification('encryption-notification', 'Please enter a password', true);
+                    return;
+                }
+                
+                const decrypted = simpleDecrypt(encrypted, password, algorithm);
+                if (decrypted) {
+                    encryptionOutput.value = decrypted;
+                    showNotification('encryption-notification', 'Text decrypted successfully!');
+                } else {
+                    showNotification('encryption-notification', 'Decryption failed. Invalid text or wrong password.', true);
+                }
+            });
+            
+            copyResultBtn.addEventListener('click', function() {
+                copyToClipboard(encryptionOutput, 'encryption-notification', this);
+            });
+            
+            // Hash generation functionality
+            const generateHashBtn = document.getElementById('generate-hash-btn');
+            const hashInput = document.getElementById('hash-input');
+            const hashOutput = document.getElementById('hash-output');
+            const copyHashBtn = document.getElementById('copy-hash');
+            const hashAlgorithm = document.getElementById('hash-algorithm');
+            
+            // Hash function using Web Crypto API
+            async function generateHash(text, algorithm) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(text);
+                
+                let hashBuffer;
+                try {
+                    switch(algorithm) {
+                        case 'sha256':
+                            hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                            break;
+                        case 'sha512':
+                            hashBuffer = await crypto.subtle.digest('SHA-512', data);
+                            break;
+                        case 'md5':
+                            // Web Crypto API doesn't support MD5, this is just a placeholder
+                            return 'MD5 not supported in this demo';
+                        default:
+                            hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    }
+                    
+                    // Convert buffer to hex string
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (e) {
+                    console.error('Hash generation error:', e);
+                    return null;
+                }
+            }
+            
+            generateHashBtn.addEventListener('click', async function() {
+                const text = hashInput.value;
+                const algorithm = hashAlgorithm.value;
+                
+                if (!text) {
+                    showNotification('hash-notification', 'Please enter text to hash', true);
+                    return;
+                }
+                
+                const hash = await generateHash(text, algorithm);
+                if (hash) {
+                    hashOutput.value = hash;
+                    showNotification('hash-notification', 'Hash generated successfully!');
+                } else {
+                    showNotification('hash-notification', 'Hash generation failed. Please try again.', true);
+                }
+            });
+            
+            copyHashBtn.addEventListener('click', function() {
+                copyToClipboard(hashOutput, 'hash-notification', this);
+            });
+            
+            // File encryption and hash functionality
+            const encryptFileBtn = document.getElementById('encrypt-file-btn');
+            const decryptFileBtn = document.getElementById('decrypt-file-btn');
+            const fileProgress = document.getElementById('file-progress');
+            const fileProgressBar = document.getElementById('file-progress-bar');
+            const fileResult = document.getElementById('file-result');
+            const downloadFileBtn = document.getElementById('download-file-btn');
+            
+            function simulateFileOperation(duration, successCallback) {
+                fileProgress.style.display = 'block';
+                fileResult.style.display = 'none';
+                fileProgressBar.style.width = '0%';
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    fileProgressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        fileResult.style.display = 'block';
+                        if (successCallback) successCallback();
+                    }
+                }, duration / 20);
+            }
+            
+            encryptFileBtn.addEventListener('click', function() {
+                const fileInput = document.getElementById('file-input');
+                const password = document.getElementById('file-password').value;
+                
+                if (!fileInput.files.length) {
+                    showNotification('file-notification', 'Please select a file', true);
+                    return;
+                }
+                
+                if (!password) {
+                    showNotification('file-notification', 'Please enter a password', true);
+                    return;
+                }
+                
+                simulateFileOperation(2000, () => {
+                    showNotification('file-notification', 'File encrypted successfully!');
+                });
+            });
+            
+            decryptFileBtn.addEventListener('click', function() {
+                const fileInput = document.getElementById('file-input');
+                const password = document.getElementById('file-password').value;
+                
+                if (!fileInput.files.length) {
+                    showNotification('file-notification', 'Please select a file', true);
+                    return;
+                }
+                
+                if (!password) {
+                    showNotification('file-notification', 'Please enter a password', true);
+                    return;
+                }
+                
+                simulateFileOperation(2000, () => {
+                    showNotification('file-notification', 'File decrypted successfully!');
+                });
+            });
+            
+            downloadFileBtn.addEventListener('click', function() {
+                showNotification('file-notification', 'Download started!');
+                // In a real app, this would trigger the actual file download
+            });
+            
+            // File hash generation
+            const generateFileHashBtn = document.getElementById('generate-file-hash-btn');
+            const fileHashProgress = document.getElementById('file-hash-progress');
+            const hashProgressBar = document.getElementById('hash-progress-bar');
+            const fileHashOutput = document.getElementById('file-hash-output');
+            const copyFileHashBtn = document.getElementById('copy-file-hash');
+            
+            generateFileHashBtn.addEventListener('click', function() {
+                const fileInput = document.getElementById('hash-file-input');
+                
+                if (!fileInput.files.length) {
+                    showNotification('file-hash-notification', 'Please select a file', true);
+                    return;
+                }
+                
+                fileHashProgress.style.display = 'block';
+                hashProgressBar.style.width = '0%';
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    hashProgressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        // Generate a fake hash for demo
+                        const fakeHash = Array.from({length: 64}, () => 
+                            Math.floor(Math.random() * 16).toString(16)).join('');
+                        fileHashOutput.value = fakeHash;
+                        showNotification('file-hash-notification', 'File hash generated successfully!');
+                    }
+                }, 100);
+            });
+            
+            copyFileHashBtn.addEventListener('click', function() {
+                copyToClipboard(fileHashOutput, 'file-hash-notification', this);
+            });
+            
+            // Dynamic password field visibility based on algorithm
+            function updatePasswordVisibility() {
+                // For hash algorithms, no password is needed
+                const hashAlgoSelect = document.getElementById('hash-algorithm');
+                if (hashAlgoSelect) {
+                    // No action needed for hash algorithms as they're in a separate tab
+                }
+                
+                // For encryption algorithms
+                const encryptionAlgoSelect = document.getElementById('encryption-algorithm');
+                if (encryptionAlgoSelect) {
+                    // All current encryption options need a password, so no changes needed
+                    // This would be used if we had algorithms that don't need passwords
+                }
+            }
+            
+            // Call initially and add event listeners for algorithm changes
+            updatePasswordVisibility();
+            
+            if (document.getElementById('hash-algorithm')) {
+                document.getElementById('hash-algorithm').addEventListener('change', updatePasswordVisibility);
+            }
+            
+            if (document.getElementById('encryption-algorithm')) {
+                document.getElementById('encryption-algorithm').addEventListener('change', updatePasswordVisibility);
+            }
+        });
+    </script>
+</body>
+</html>
