@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SecureShield</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureShield</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#tools">Tools</a></li>
+                    <li><a href="index.html#awareness">Awareness</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="security-tip">
+        <p>Security Tip: Use a password manager to generate and store strong passwords</p>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-form-container">
+            <div class="auth-form">
+                <h2>Welcome Back</h2>
+                <p>Enter your credentials to access your account</p>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="auth-links">
+                        <label>
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <a href="forgot-password.html">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Login</button>
+                    
+                    <div class="auth-separator">
+                        <hr><span>OR</span><hr>
+                    </div>
+                    
+                    <div class="social-login">
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-google"></i>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        Don't have an account? <a href="signup.html">Sign up</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="auth-image">
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+                <div style="background-color: rgba(10, 25, 47, 0.8); padding: 2rem; border-radius: 10px; max-width: 500px;">
+                    <h2 style="color: #64ffda; margin-bottom: 1rem; font-size: 1.8rem;">Secure Your Digital World</h2>
+                    <p style="color: #e0e0e0; margin-bottom: 1rem;">
+                        "The best security measures are the ones you don't have to think about. They just work."
+                    </p>
+                    <p style="color: #8892b0; font-style: italic;">
+                        - SecureShield Team
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2023 SecureShield. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

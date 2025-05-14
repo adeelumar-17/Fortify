@@ -1,0 +1,27 @@
+# Node modules (very heavy, always ignore)
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment variable files (keep secrets safe)
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build directories (if using tools like Webpack or TypeScript)
+dist/
+build/
+
+# IDEs/editors
+.vscode/
+.idea/
+
+# Optional: Ignore temp files
+*.tmp
+*.swp
+*.bak

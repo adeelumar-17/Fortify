@@ -1,0 +1,607 @@
+<script>
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    // Save current page to redirect back after login
+    localStorage.setItem("redirectAfterLogin", window.location.pathname);
+    window.location.href = "/login.html";
+  }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs Analyzer - SecureShield</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles specific to logs analyzer tool */
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .logs-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+        
+        .logs-controls select, .logs-controls input {
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #3a506b;
+            background-color: #233554;
+            color: #ccd6f6;
+            font-size: 1rem;
+        }
+        
+        .logs-controls select {
+            min-width: 150px;
+        }
+        
+        .logs-controls input[type="date"] {
+            min-width: 150px;
+        }
+        
+        .logs-controls button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            border: none;
+            background-color: #64ffda;
+            color: #0a192f;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logs-controls button:hover {
+            background-color: #4fd1b5;
+            transform: translateY(-2px);
+        }
+        
+        .logs-controls .search-container {
+            position: relative;
+            flex-grow: 1;
+        }
+        
+        .logs-controls .search-container input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+        
+        .logs-controls .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8892b0;
+        }
+        
+        .logs-panel {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .logs-panel h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logs-panel h3 .controls {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .logs-panel h3 .controls button {
+            background: none;
+            border: none;
+            color: #64ffda;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .logs-panel h3 .controls button:hover {
+            color: #4fd1b5;
+            transform: translateY(-2px);
+        }
+        
+        .log-entry {
+            padding: 0.75rem;
+            border-left: 4px solid;
+            margin-bottom: 0.75rem;
+            background-color: rgba(58, 80, 107, 0.3);
+            border-radius: 0 5px 5px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .log-entry.error {
+            border-left-color: #ef4444;
+        }
+        
+        .log-entry.warning {
+            border-left-color: #fbbf24;
+        }
+        
+        .log-entry.info {
+            border-left-color: #3b82f6;
+        }
+        
+        .log-entry.debug {
+            border-left-color: #a3a3a3;
+        }
+        
+        .log-timestamp {
+            color: #8892b0;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .log-level {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .log-level.error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .log-level.warning {
+            background-color: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+        
+        .log-level.info {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .log-level.debug {
+            background-color: rgba(163, 163, 163, 0.2);
+            color: #a3a3a3;
+        }
+        
+        .log-source {
+            color: #ccd6f6;
+        }
+        
+        .log-message {
+            color: #ccd6f6;
+            margin-top: 0.25rem;
+        }
+        
+        .log-details {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(10, 25, 47, 0.5);
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .log-entry.expanded .log-25{
+            background-color: rgba(10, 25, 47, 0.7);
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .log-entry.expanded .log-details {
+            display: block;
+        }
+        
+        .log-entry .expand-button {
+            background: none;
+            border: none;
+            color: #64ffda;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .log-entry .expand-button:hover {
+            color: #4fd1b5;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stats-card h3 {
+            color: #64ffda;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            background: linear-gradient(135deg, #233554, #2a4365);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-container h3 {
+            color: #64ffda;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-placeholder {
+            height: 250px;
+            border: 1px dashed #3a506b;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8892b0;
+        }
+        
+        @media (max-width: 768px) {
+            .logs-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .logs-controls .search-container {
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureShield</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#tools">Tools</a></li>
+                    <li><a href="index.html#awareness">Awareness</a></li>
+                    <li>
+                        <a href="#" class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="account-dropdown">
+                            <a href="#" class="account-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="login.html">Login</a>
+                                <a href="signup.html">Sign Up</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="security-tip">
+        <p>Security Tip: Regularly review your system logs to detect suspicious activities</p>
+    </div>
+
+    <main>
+        <section class="tool-header">
+            <div class="container">
+                <h1><i class="fas fa-file-alt"></i> Logs Analyzer</h1>
+                <p>Analyze system, security, and performance logs to identify issues and threats</p>
+            </div>
+        </section>
+
+        <section class="tool-container">
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <h3>Total Logs</h3>
+                    <div class="stats-value">1,247</div>
+                    <div>Last 24 hours</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Errors</h3>
+                    <div class="stats-value">23</div>
+                    <div>Last 24 hours</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Warnings</h3>
+                    <div class="stats-value">78</div>
+                    <div>Last 24 hours</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Security Events</h3>
+                    <div class="stats-value">12</div>
+                    <div>Last 24 hours</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3><i class="fas fa-chart-line"></i> Log Activity</h3>
+                <div class="chart-placeholder" id="log-activity-chart">
+                    <p>Log activity chart will be displayed here</p>
+                </div>
+            </div>
+
+            <div class="logs-controls">
+                <select id="log-type">
+                    <option value="all">All Logs</option>
+                    <option value="system">System Logs</option>
+                    <option value="security">Security Logs</option>
+                    <option value="application">Application Logs</option>
+                    <option value="performance">Performance Logs</option>
+                </select>
+                <select id="log-level">
+                    <option value="all">All Levels</option>
+                    <option value="error">Error</option>
+                    <option value="warning">Warning</option>
+                    <option value="info">Info</option>
+                    <option value="debug">Debug</option>
+                </select>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="log-search" placeholder="Search logs...">
+                </div>
+                <input type="date" id="log-date" value="2023-05-15">
+                <button id="filter-logs"><i class="fas fa-filter"></i> Filter</button>
+            </div>
+
+            <div class="logs-panel">
+                <h3>
+                    <span><i class="fas fa-file-alt"></i> Log Entries</span>
+                    <div class="controls">
+                        <button id="refresh-logs" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+                        <button id="export-logs" title="Export"><i class="fas fa-download"></i></button>
+                    </div>
+                </h3>
+                <div id="logs-container">
+                    <!-- Log entries will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SecureShield</h3>
+                    <p>Protecting your digital world with cutting-edge security solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#tools">Tools</a></li>
+                        <li><a href="index.html#awareness">Awareness</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect With Us</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 SecureShield. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate log entries
+            populateLogEntries();
+            
+            // Add event listeners
+            document.getElementById('filter-logs').addEventListener('click', filterLogs);
+            document.getElementById('refresh-logs').addEventListener('click', refreshLogs);
+            document.getElementById('export-logs').addEventListener('click', exportLogs);
+            
+            // Initialize log activity chart
+            initLogActivityChart();
+        });
+        
+        function populateLogEntries() {
+            const logsContainer = document.getElementById('logs-container');
+            
+            // Sample log data
+            const logs = [
+                {
+                    timestamp: '2023-05-15 08:23:45',
+                    level: 'error',
+                    source: 'system.auth',
+                    message: 'Failed login attempt for user admin from IP 203.0.113.42',
+                    details: {
+                        attempts: 5,
+                        user: 'admin',
+                        ip: '203.0.113.42',
+                        location: 'Unknown'
+                    }
+                },
+                {
+                    timestamp: '2023-05-15 08:22:17',
+                    level: 'warning',
+                    source: 'firewall',
+                    message: 'Blocked suspicious connection attempt from IP 198.51.100.23 to port 22',
+                    details: {
+                        source_ip: '198.51.100.23',
+                        destination_port: 22,
+                        protocol: 'TCP',
+                        rule: 'Block SSH from unknown sources'
+                    }
+                },
+                {
+                    timestamp: '2023-05-15 08:15:32',
+                    level: 'info',
+                    source: 'system.service',
+                    message: 'Service "nginx" started successfully',
+                    details: {
+                        service: 'nginx',
+                        pid: 1234,
+                        status: 'running',
+                        uptime: '0:00:05'
+                    }
+                },
+                {
+                    timestamp: '2023-05-15 08:10:11',
+                    level: 'error',
+                    source: 'application.web',
+                    message: 'Database connection failed: Connection refused',
+                    details: {
+                        database: 'users_db',
+                        host: 'db.example.com',
+                        port: 5432,
+                        error_code: 'ECONNREFUSED'
+                    }
+                },
+                {
+                    timestamp: '2023-05-15 08:05:23',
+                    level: 'warning',
+                    source: 'system.disk',
+                    message: 'Disk space running low on /dev/sda1 (85% used)',
+                    details: {
+                        device: '/dev/sda1',
+                        mount_point: '/',
+                        total: '500GB',
+                        used: '425GB',
+                        available: '75GB'
+                    }
+                },
+                {
+                    timestamp: '2023-05-15 08:01:45',
+                    level: 'info',
+                    source: 'security.update',
+                    message: 'Security updates available: 3 critical, 5 important',
+                    details: {
+                        updates: [
+                            { package: 'openssl', version: '1.1.1k-1', severity: 'critical' },
+                            { package: 'bash', version: '5.1-3', severity: 'important' },
+                            { package: 'kernel', version: '5.10.23-1', severity: 'critical' }
+                        ]
+                    }
+                },
+                {
+                    timestamp: '2023-05-15 07:55:12',
+                    level: 'debug',
+                    source: 'application.api',
+                    message: 'API request processed: GET /api/users/123',
+                    details: {
+                        method: 'GET',
+                        path: '/api/users/123',
+                        status: 200,
+                        duration: '45ms',
+                        user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    }
+                }
+            ];
+            
+            // Clear existing logs
+            logsContainer.innerHTML = '';
+            
+            // Add log entries
+            logs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${log.level}`;
+                
+                // Format details as JSON string
+                const detailsStr = JSON.stringify(log.details, null, 2);
+                
+                logEntry.innerHTML = `
+                    <div class="log-timestamp">${log.timestamp}</div>
+                    <span class="log-level ${log.level}">${log.level.toUpperCase()}</span>
+                    <span class="log-source">${log.source}</span>
+                    <button class="expand-button">Details</button>
+                    <div class="log-message">${log.message}</div>
+                    <div class="log-details">${detailsStr}</div>
+                `;
+                
+                logsContainer.appendChild(logEntry);
+                
+                // Add event listener to expand button
+                const expandButton = logEntry.querySelector('.expand-button');
+                expandButton.addEventListener('click', function() {
+                    logEntry.classList.toggle('expanded');
+                    this.textContent = logEntry.classList.contains('expanded') ? 'Hide' : 'Details';
+                });
+            });
+        }
+        
+        function filterLogs() {
+            // In a real application, this would filter logs based on selected criteria
+            alert('Filtering logs based on selected criteria');
+        }
+        
+        function refreshLogs() {
+            // In a real application, this would fetch fresh logs from the server
+            alert('Refreshing logs from server');
+            populateLogEntries();
+        }
+        
+        function exportLogs() {
+            // In a real application, this would export logs to a file
+            alert('Exporting logs to file');
+        }
+        
+        function initLogActivityChart() {
+            // In a real application, this would initialize a chart showing log activity
+            const chartPlaceholder = document.getElementById('log-activity-chart');
+            chartPlaceholder.innerHTML = '<p>Log activity chart would be displayed here using a charting library</p>';
+        }
+    </script>
+</body>
+</html>
